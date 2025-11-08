@@ -2,7 +2,7 @@ import { error } from 'console';
 import EventModel from '../models/eventModel.js';
 import { get } from 'http';
 
-const getAllEvents = async (req, res)=>{
+export const getAllEvents = async (req, res)=>{
     try {
         const events = EventModel.findAll();
         res.status(200).json(events);
@@ -11,7 +11,7 @@ const getAllEvents = async (req, res)=>{
     }
 }
 
-const getEvent = async (req,res)=>{
+export const getEvent = async (req,res)=>{
     try {
         const event = EventModel.find(req.params.id);
         if(!event){
@@ -23,7 +23,7 @@ const getEvent = async (req,res)=>{
     }
 }
 
-const createEvent = async (req,res)=>{
+export const createEvent = async (req,res)=>{
     try {
         const event = await EventModel.create(req.body);
         res.status(201).json(event);
@@ -32,7 +32,7 @@ const createEvent = async (req,res)=>{
     }
 }
 
-const updateEvent = async (req,res)=>{
+export const updateEvent = async (req,res)=>{
     try {
         const event = await EventModel.update(req.params.id, req.body);
         if(!event){
@@ -44,7 +44,7 @@ const updateEvent = async (req,res)=>{
     }
 }
 
-const deleteEvent = async (req,res)=>{
+export const deleteEvent = async (req,res)=>{
     try {
         const event = await EventModel.delete(req.params.id);
         if(!event){
@@ -55,5 +55,3 @@ const deleteEvent = async (req,res)=>{
         res.status(500).json({ message: 'Error deleting event', error: error.message });
     }
 }
-
-module.exports = {getEvent, getAllEvents, createEvent, updateEvent, deleteEvent};

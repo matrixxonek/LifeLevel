@@ -69,3 +69,6 @@ lerna-debug.log*
 
 # Jeśli generujesz pliki z ID/kluczami sesji
 /sessions
+
+#Zmienne środowiskowe
+/.env

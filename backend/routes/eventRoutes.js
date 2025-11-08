@@ -1,5 +1,5 @@
 import express from 'express';
-import {getAllEvents, getEvent, createEvent, updateEvent, deleteEvent} from '../controllers/eventController';
+import {getAllEvents, getEvent, createEvent, updateEvent, deleteEvent} from '../controllers/eventController.js';
 
 const router = express.Router();
 
@@ -20,4 +20,4 @@ router.use((req, res, next) => {
     next();
 });
 
-module.export = router;
+export default router;
