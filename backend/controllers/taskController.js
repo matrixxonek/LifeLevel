@@ -13,7 +13,7 @@ export const getAllTasks = async (req, res)=>{
 
 export const getTask = async (req,res)=>{
     try {
-        const task = TaskModel.find(req.params.id);
+        const task = TaskModel.findByPk(req.params.id);
         if(!task){
             res.status(404).json({message: 'Task not found'});
         }
@@ -46,7 +46,7 @@ export const updateTask = async (req,res)=>{
 
 export const deleteTask = async (req,res)=>{
     try {
-        const task = await TaskModel.delete(req.params.id);
+        const task = await TaskModel.destroy(req.params.id);
         if(!task){
             res.status(404).json({message: 'Task not found'});
         }
