@@ -18,10 +18,12 @@ const Task = sequelize.define('Task', {
     start: {
         type: DataTypes.DATE,
         allowNull: false,
+        field: 'start_date',
     },
     end: {
         type: DataTypes.DATE,
         allowNull: false,
+        field: 'end_date',
     },
     status: {
         type: DataTypes.ENUM('To Do', 'In Progress', 'Done'),

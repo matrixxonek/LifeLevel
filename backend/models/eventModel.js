@@ -18,10 +18,12 @@ const Event = sequelize.define('Event', {
     start: {
         type: DataTypes.DATE,
         allowNull: false,
+        field: 'start_date',
     },
     end: {
         type: DataTypes.DATE,
         allowNull: false,
+        field: 'end_date',
     },
     isAllDay: {
         type:DataTypes.BOOLEAN,
