@@ -12,7 +12,7 @@ const DnDCalendar = withDragAndDrop<CalendarItem, moment.Moment>(Calendar);
 
 const CalendarComponent = () => {
     const [myCalendarItems, setMyCalendarItems] = useState<CalendarItem[]>([]);
-    //Trzeba MyCalendarItems setować z danych odebranych z bazy danych
+    const [isFormOpen, setIsFormOpern] = useState<boolean>(false);
 
     const onEventDrop = ()=>{
 

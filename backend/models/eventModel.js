@@ -7,16 +7,28 @@ const Event = sequelize.define('Event', {
         primaryKey: true,
         autoIncrement: true, 
     },
-    name: {
+    title: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    value: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
+    description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    start: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    end: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    isAllDay: {
+        type:DataTypes.BOOLEAN,
+        allowNull: false,
     }
 },{
     tableName: 'events',
-    timestamps: false
+    timestamps: true
 });
 export default Event;

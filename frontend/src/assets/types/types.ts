@@ -13,18 +13,18 @@ interface CalendarEvent extends ItemBase {
 }
 interface CalendarTask extends ItemBase {
     type: 'task';
-    deadline: Date;
-    status: 'To Do' | 'In Progress' | 'Done';
-    category: 'Mind' | 'Physical' | 'Social';
     start: Date;
     end: Date;
+    status: 'To Do' | 'In Progress' | 'Done';
+    priority: 'Low' | 'Medium' | 'High';
+    category: 'Mind' | 'Physical' | 'Social';
 }
 
 export type CalendarItem = CalendarEvent | CalendarTask;
 
 //Typy Wejściowe dla danych od użytkownika
 
-type CreateEvent = Omit<CalendarEvent, 'id' | 'type'>;
-type CreateTask = Omit<CalendarTask, 'id' | 'start' | 'end' | 'type'>;
+export type CreateEvent = Omit<CalendarEvent, 'id' | 'type'>;
+export type CreateTask = Omit<CalendarTask, 'id' | 'end' | 'type'>;
 
 export type CreateItem = { type: 'event', data: CreateEvent } | { type: 'task', data: CreateTask };
