@@ -1,5 +1,6 @@
 import express from 'express';
 import {getAllTasks, getTask, createTask, updateTask, deleteTask} from '../controllers/taskController.js';
+import { stringToDateMiddleware } from '../middleware/stringToDateMiddleware.js';
 
 const router = express.Router();
 
@@ -7,9 +8,9 @@ router.get('/', getAllTasks);
 
 router.get('/:id', getTask);
 
-router.post('/', createTask);
+router.post('/', stringToDateMiddleware, createTask);
 
-router.put('/:id', updateTask);
+router.put('/:id', stringToDateMiddleware, updateTask);
 
 router.delete('/:id', deleteTask);
 

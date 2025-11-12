@@ -1,5 +1,6 @@
 import express from 'express';
 import {getAllEvents, getEvent, createEvent, updateEvent, deleteEvent} from '../controllers/eventController.js';
+import { stringToDateMiddleware } from '../middleware/stringToDateMiddleware.js';
 
 const router = express.Router();
 
@@ -7,9 +8,9 @@ router.get('/', getAllEvents);
 
 router.get('/:id', getEvent);
 
-router.post('/', createEvent);
+router.post('/', stringToDateMiddleware, createEvent);
 
-router.put('/:id', updateEvent);
+router.put('/:id', stringToDateMiddleware, updateEvent);
 
 router.delete('/:id', deleteEvent);
 

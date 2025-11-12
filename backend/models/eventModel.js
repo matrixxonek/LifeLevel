@@ -28,6 +28,7 @@ const Event = sequelize.define('Event', {
     isAllDay: {
         type:DataTypes.BOOLEAN,
         allowNull: false,
+        field: 'is_all_day',
     }
 },{
     tableName: 'events',

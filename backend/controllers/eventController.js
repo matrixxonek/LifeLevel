@@ -1,8 +1,10 @@
 import Event from '../models/eventModel.js';
+import {eventTypeAddingMiddleware} from '../middleware/eventTypeAddingMiddleware.js';
 
 export const getAllEvents = async (req, res)=>{
     try {
-        const events = Event.findAll();
+        const events = await Event.findAll();
+        events =  eventTypeAddingMiddleware(events);
         res.status(200).json(events);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving eventss', error: error.message });
@@ -15,6 +17,7 @@ export const getEvent = async (req,res)=>{
         if(!event){
             res.status(404).json({message: 'Event not found'});
         }
+        event =  eventTypeAddingMiddleware(event);
         res.status(200).json(event);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving event', error: error.message });
