@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState} from 'react';
 import type {CalendarItem, CreateItem} from '../types/types.ts';
 
 interface FormProps {
@@ -11,6 +11,7 @@ interface FormProps {
 }
 
 function Form(props: FormProps) {
+  const [itemType, setItemType] = useState<'event' | 'task'>(props.formData !== null ? props.formData.type : 'event');
   return <div>Form Component</div>;
 }
 export default Form;
