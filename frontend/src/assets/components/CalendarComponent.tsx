@@ -20,6 +20,16 @@ const CalendarComponent = () => {
     const [formData, setFormData] = useState<CalendarItem | null>(null);
     const [initialDates, setInitialDates] = useState<{ start: Date, end: Date } | null>(null);
 
+    const convertItemDates = (item: CalendarItem): CalendarItem => ({
+        ...item,
+        start: item.start instanceof Date ? item.start : new Date(item.start),
+        end: item.end instanceof Date ? item.end : new Date(item.end),
+    });
+
+    const convertArrayDates = (items: CalendarItem[]): CalendarItem[] => {
+        return items.map(convertItemDates);
+    };
+
     //#region Handlery API
     const onCreateItem = async(newItem: CreateItem)=>{
         try {
@@ -31,9 +41,15 @@ const CalendarComponent = () => {
     }
     const onUpdateItem = async(itemToEdit: CalendarItem)=>{
         try {
-            const updatedItem = await updateItemHandler(itemToEdit);
+            const updatedItemApi = await updateItemHandler(itemToEdit);
+            const updatedItem = {
+                ...updatedItemApi,
+                type: itemToEdit.type,
+                start: new Date(updatedItemApi.start), 
+                end: new Date(updatedItemApi.end),
+            } as CalendarItem;
             setCalendarItems(prevItems => prevItems.map(item => 
-                item.id === updatedItem.id && item.type === updatedItem.type ? updatedItem: item
+                item.id === updatedItem.id ? updatedItem: item 
             ));
         } catch (error) {
             console.error("Nie udało się zaktualizować elementu:", error);
@@ -92,7 +108,8 @@ const CalendarComponent = () => {
                 const tasksPromise = getAllTasksHandler();
                 const [events, tasks] = await Promise.all([eventsPromise, tasksPromise]);
                 const allItems = [...events, ...tasks];
-                setCalendarItems(allItems);
+                const convertedAllItems = convertArrayDates(allItems);
+                setCalendarItems(convertedAllItems);
             } catch (error) {
                 console.error("Nie udało się załadować danych kalendarza:", error);
             } finally {

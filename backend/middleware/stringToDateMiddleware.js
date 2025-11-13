@@ -1,10 +1,10 @@
 import { warn } from "console";
 
 export const stringToDateMiddleware = (req, res, next) => {
-    dateFields = ['start', 'end'];
+    const dateFields = ['start', 'end'];
 
     if (req.body) {
-        dataFields.forEach(element => {
+        dateFields.forEach(element => {
             const dateString = req.body[element];
             if (dateString && typeof dateString === 'string') {
                 const date = new Date(dateString);

@@ -6,11 +6,13 @@ import taskRoute from './routes/taskRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT;
+
 app.use(cors({
-    origin: ['http://localhost:5173']
+    origin: ['http://localhost:5174']
 }));
 
 app.use(express.json());
+
 app.use('/api/events', eventRoute);
 app.use('/api/tasks', taskRoute)
 

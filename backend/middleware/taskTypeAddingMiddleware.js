@@ -1,14 +1,15 @@
-export const typeAddingMiddleware = (taskt) => {
+export const taskTypeAddingMiddleware = (tasks) => {
     try {
-        const transformedTasks = tasks.map(task =>{
+        if (!Array.isArray(tasks)) return [];
+        return tasks.map(task =>{
             const dataValue = task.toJSON();
             return{
                 ...dataValue,
                 type: 'task'
             };
         });
-        return res.status(200).json(transformedTasks);
     } catch (error) {
-        console.log('Błąd podczas dodawania typu do danych z bazy');
-    }   
+        console.error('Błąd podczas dodawania typu Event:', error);
+        throw new Error('Failed to transform event data.');
+    } 
 }
