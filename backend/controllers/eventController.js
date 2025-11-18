@@ -41,7 +41,6 @@ export const updateEvent = async (req,res)=>{
             res.status(404).json({message: 'Event not found'});
         }
         const updatedEvent = await Event.findByPk(id);
-        console.log('eventController.updateEvent zwraca: ', updatedEvent.toJSON()); 
         return res.status(200).json(updatedEvent.toJSON());
     } catch (error) {
         res.status(500).json({ message: 'Error updating event', error: error.message });
