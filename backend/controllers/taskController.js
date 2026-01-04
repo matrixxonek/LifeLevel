@@ -46,8 +46,9 @@ export const updateTask = async (req,res)=>{
         if(!task){
             res.status(404).json({message: 'Task not found'});
         }
-        const updatedTask = Task.findByPk(req.params.id);
-        res.status(200).json(updatedTask);
+        const updatedTask = await Task.findByPk(req.params.id);
+        const typedtask = taskTypeAddingMiddleware([updatedTask])[0];
+        res.status(200).json(typedtask);
     } catch (error) {
         res.status(500).json({ message: 'Error updating Task', error: error.message });
     }
