@@ -27,6 +27,7 @@ const CalendarComponent = () => {
     });
 
     const convertArrayDates = (items: CalendarItem[]): CalendarItem[] => {
+        console.log(items);
         return items.map(convertItemDates);
     };
 
@@ -39,7 +40,7 @@ const CalendarComponent = () => {
             console.error("Nie udało się utworzyć elementu:", error);
         }
     }
-    const onUpdateItem = async(itemToEdit: CalendarItem)=>{
+    const onUpdateItem = useCallback(async(itemToEdit: CalendarItem)=>{
         try {
             const updatedItemApi = await updateItemHandler(itemToEdit);
             const updatedItem = {
@@ -54,7 +55,7 @@ const CalendarComponent = () => {
         } catch (error) {
             console.error("Nie udało się zaktualizować elementu:", error);
         }
-    }
+    }, [setCalendarItems]);
     const onDeleteItem = async(itemToDelete: CalendarItem)=>{
         try {
             await deleteItemHandler(itemToDelete); 

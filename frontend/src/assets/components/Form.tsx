@@ -20,6 +20,8 @@ function Form(props: FormProps) {
   
   useEffect(() =>{
     if(isEditMode){
+      console.log(props.formData?.type)
+      setItemType(props.formData?.type || 'event')
       if(itemType == 'event'){
         const originalEvent: CalendarItem = props.formData as CalendarItem;
         const { id, type, ...dataToCreate } = originalEvent;
@@ -34,6 +36,7 @@ function Form(props: FormProps) {
     }else{
       const newEvent = {start: props.initialDates?.start, end: props.initialDates?.end, title: '',description: '',isAllDay: false} as CreateEvent;
       setCurrentData(newEvent);
+      setItemType('event');
     }
   }, [props.formData, props.initialDates]);
 
@@ -92,7 +95,36 @@ function Form(props: FormProps) {
     } catch (error) {
       console.error("Błąd usunięcia danych.", error);
     }
+    props.onClose()
   }
+
+  const handleTypeChange = (newType: 'event' | 'task') => {
+      if (newType === 'task') {
+        console.log('Zmiana form na taska');
+          const newDeadlineDate = (currentData as any)?.start || new Date();
+          const defaultTask: CreateTask = {
+              title: currentData.title,
+              description: currentData.description,
+              start: currentData.start,
+              end: new Date(newDeadlineDate.getTime() + 30 * 60000),
+              status: 'To Do', 
+              priority: 'Low', 
+              category: 'Mind',
+          } as CreateTask;
+          setCurrentData(defaultTask);
+          setItemType('task');
+      } else {
+          console.log('Zmiana form na event');
+          const defaultEvent: CreateEvent= {
+              title: currentData.title,
+              description: currentData.description,
+              start: currentData.start,
+              isAllDay: false,
+          } as CreateEvent;
+          setCurrentData(defaultEvent);
+          setItemType('event');
+      }
+  };
 
   return (
     <div className="modal-backdrop" onClick={props.onClose}>
@@ -101,11 +133,11 @@ function Form(props: FormProps) {
             {!isEditMode && (
               <div className="type-toggle">
                 <button 
-                  onClick={() => setItemType('event')} 
+                  onClick={() => handleTypeChange('event')} 
                   disabled={itemType === 'event'}
                 >Event</button>
                 <button 
-                  onClick={() => setItemType('task')}
+                  onClick={() => handleTypeChange('task')}
                   disabled={itemType === 'task'}
                 >Task</button>
               </div>

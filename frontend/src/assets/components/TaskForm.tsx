@@ -13,6 +13,17 @@ const TaskFields: React.FC<TaskFieldsProps> = ({ data, onChange }) => {
     const priorities = ['Low', 'Medium', 'High'];
     const categories = ['Mind', 'Physical', 'Social'];
 
+    const handleDeadlineChange = (dateString: string) => {
+        const deadlineDate = new Date(dateString);
+        onChange('start', deadlineDate); 
+    };
+    const formatStartToInput = () => {
+        if (data.start instanceof Date) {
+            return data.start.toISOString().slice(0, 16); 
+        }
+        return '';
+    };
+
     return (
         <div className="task-fields">
             <label htmlFor="title">Tytuł</label>
@@ -29,6 +40,15 @@ const TaskFields: React.FC<TaskFieldsProps> = ({ data, onChange }) => {
                 id="description" 
                 value={data.description || ''}
                 onChange={(e) => onChange('description', e.target.value)}
+            />
+
+            <label htmlFor="deadline">Deadline</label>
+            <input
+                id="deadline"
+                type="datetime-local"
+                value={formatStartToInput()} 
+                onChange={(e) => handleDeadlineChange(e.target.value)}
+                required
             />
 
             <label htmlFor="priority">Priorytet</label>
@@ -60,9 +80,6 @@ const TaskFields: React.FC<TaskFieldsProps> = ({ data, onChange }) => {
             >
                 {categories.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
-            
-            {/* UWAGA: Daty start/end są używane do wizualizacji deadline'u Taska
-               i muszą być dostępne, jeśli użytkownik ma je zmieniać */}
         </div>
     );
 };

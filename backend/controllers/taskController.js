@@ -2,25 +2,31 @@ import Task from '../models/taskModel.js';
 import { taskTypeAddingMiddleware } from '../middleware/taskTypeAddingMiddleware.js';
 
 export const getAllTasks = async (req, res)=>{
+    console.log('--- KONTROLER TASKÓW ZOSTAŁ WYWOŁANY ---');
     try {
         const tasks = await Task.findAll();
+        console.log('przed dodaniem typu: '+tasks);
         const typedTasks = taskTypeAddingMiddleware(tasks);
-        res.status(200).json(typedTasks);
+        console.log('po dodaniu typu: '+typedTasks);
+        return res.status(200).json(typedTasks);
     } catch (error) {
-        res.status(500).json({ message: 'Error retrieving tasks', error: error.message });
+        console.error('Błąd w kontrolerze Tasków:', error);
+        return res.status(500).json({ message: 'Error retrieving tasks', error: error.message });
     }
 }
 
 export const getTask = async (req,res)=>{
+    console.log('test');
     try {
         const task = await Task.findByPk(req.params.id);
         if(!task){
             res.status(404).json({message: 'Task not found'});
         }
-        const typedtask = typeAddingMiddleware(task);
-        res.status(200).json(typedtask);
+        const typedtask = taskTypeAddingMiddleware([task])[0];
+        console.log(typedtask);
+        return res.status(200).json(typedtask);
     } catch (error) {
-        res.status(500).json({ message: 'Error retrieving Task', error: error.message });
+        return res.status(500).json({ message: 'Error retrieving Task', error: error.message });
     }
 }
 

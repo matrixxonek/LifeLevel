@@ -21,6 +21,7 @@ export const createItemHandler = async (newItem: CreateItem) : Promise<CalendarI
 
 export const updateItemHandler = async(itemToEdit: CalendarItem) : Promise<CalendarItem> =>{
   try {
+    console.log('Moj item ktory updateuje: ' +itemToEdit +' a to jego typ: ' + itemToEdit.type);
     const API_URL = BASE_API_URL.concat(itemToEdit.type === 'event'?'events':'tasks').concat('/').concat(itemToEdit.id);
     const response = await axios.put<CalendarItem>(API_URL, itemToEdit);
     return response.data; 
@@ -52,7 +53,9 @@ export const getAllEventsHandler = async() : Promise<CalendarItem[]> =>{
 export const getAllTasksHandler = async() : Promise<CalendarItem[]> =>{
   try {
     const API_URL = BASE_API_URL.concat('tasks');
+    console.log('dziala w apiservice');
     const response = await axios.get<CalendarItem[]>(API_URL);
+    console.log('dziala w apiservice po odpowiedzi');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
