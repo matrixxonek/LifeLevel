@@ -127,8 +127,8 @@ function Form(props: FormProps) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={props.onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>      
+    <div className="modal-backdrop fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={props.onClose}>
+      <div className="modal-content bg-emerald-950 border border-emerald-700 p-4 rounded-md shadow-md inset-10" onClick={(e) => e.stopPropagation()}>      
           <h2>{isEditMode ? 'Edytuj Element' : 'Nowy Element'}</h2>
             {!isEditMode && (
               <div className="type-toggle">
@@ -143,16 +143,16 @@ function Form(props: FormProps) {
               </div>
             )}
             {ComponentToRender}
-            <div className="actions">
-              <button onClick={handleSave} className="save-btn">
+            <div className="actions space-x-4 mt-4 justify-end">
+              <button onClick={handleSave} className="save-btn bg-blue-500 p-2 rounded-md text-white">
                 {isEditMode ? 'Zapisz Zmiany' : 'Utwórz'}
               </button>
                 {isEditMode && (
-                  <button onClick={handleDelete} className="delete-btn">
+                  <button onClick={handleDelete} className="delete-btn bg-red-500 p-2 rounded-md text-white">
                     Usuń
                   </button>
                 )}
-                <button onClick={props.onClose} className="cancel-btn">
+                <button onClick={props.onClose} className="cancel-btn bg-red-500 p-2 rounded-md text-white">
                   Anuluj
                 </button>
             </div>

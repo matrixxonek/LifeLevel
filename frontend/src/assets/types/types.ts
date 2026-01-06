@@ -3,6 +3,7 @@ interface ItemBase {
   title: string;
   description: string;
   //cykliczność
+  userId: string;
 }
 
 interface CalendarEvent extends ItemBase {
@@ -24,7 +25,7 @@ export type CalendarItem = CalendarEvent | CalendarTask;
 
 //Typy Wejściowe dla danych od użytkownika
 
-export type CreateEvent = Omit<CalendarEvent, 'id' | 'type'>;
-export type CreateTask = Omit<CalendarTask, 'id' | 'end' | 'type'>;
+export type CreateEvent = Omit<CalendarEvent, 'id' | 'type' | 'userId'>;
+export type CreateTask = Omit<CalendarTask, 'id' | 'end' | 'type' | 'userId'>;
 
 export type CreateItem = { type: 'event', data: CreateEvent } | { type: 'task', data: CreateTask };

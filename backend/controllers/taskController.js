@@ -4,7 +4,9 @@ import { taskTypeAddingMiddleware } from '../middleware/taskTypeAddingMiddleware
 export const getAllTasks = async (req, res)=>{
     console.log('--- KONTROLER TASKÓW ZOSTAŁ WYWOŁANY ---');
     try {
-        const tasks = await Task.findAll();
+        const tasks = await Task.findAll({ 
+            where: { userId: req.user.id } 
+        });
         console.log('przed dodaniem typu: '+tasks);
         const typedTasks = taskTypeAddingMiddleware(tasks);
         console.log('po dodaniu typu: '+typedTasks);
@@ -18,7 +20,9 @@ export const getAllTasks = async (req, res)=>{
 export const getTask = async (req,res)=>{
     console.log('test');
     try {
-        const task = await Task.findByPk(req.params.id);
+        const task = await Task.findOne({ 
+            where: { id: req.params.id, userId: req.user.id } 
+        });
         if(!task){
             res.status(404).json({message: 'Task not found'});
         }
@@ -32,7 +36,8 @@ export const getTask = async (req,res)=>{
 
 export const createTask = async (req,res)=>{
     try {
-        const task = await Task.create(req.body);
+        const taskData = { ...req.body, userId: req.user.id };
+        const task = await Task.create(taskData);
         res.status(201).json(task);
     } catch (error) {
         res.status(500).json({ message: 'Error creating Task', error: error.message });
@@ -41,12 +46,16 @@ export const createTask = async (req,res)=>{
 
 export const updateTask = async (req,res)=>{
     try {
-        const id = req.params.id;
-        const task = await Task.update(req.body, { where: { id: req.params.id } });
-        if(!task){
-            res.status(404).json({message: 'Task not found'});
+        const [updatedRows] = await Task.update(req.body, { 
+            where: { id: req.params.id, userId: req.user.id } 
+        });
+
+        if (updatedRows === 0) {
+            return res.status(404).json({ message: 'Task not found or unauthorized' });
         }
-        const updatedTask = await Task.findByPk(req.params.id);
+        const updatedTask = await Task.findOne({ 
+            where: { id: req.params.id, userId: req.user.id } 
+        });
         const typedtask = taskTypeAddingMiddleware([updatedTask])[0];
         res.status(200).json(typedtask);
     } catch (error) {
@@ -56,9 +65,12 @@ export const updateTask = async (req,res)=>{
 
 export const deleteTask = async (req,res)=>{
     try {
-        const task = await Task.destroy({ where: { id: req.params.id } });
-        if(!task){
-            res.status(404).json({message: 'Task not found'});
+        const deletedRows = await Task.destroy({ 
+            where: { id: req.params.id, userId: req.user.id } 
+        });
+
+        if (deletedRows === 0) {
+            return res.status(404).json({ message: 'Task not found or unauthorized' });
         }
         res.status(200).json({message: 'Task deleted successfully'});
     } catch (error) {

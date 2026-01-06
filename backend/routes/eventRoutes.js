@@ -1,19 +1,18 @@
 import express from 'express';
 import {getAllEvents, getEvent, createEvent, updateEvent, deleteEvent} from '../controllers/eventController.js';
 import { stringToDateMiddleware } from '../middleware/stringToDateMiddleware.js';
+import authTokenMiddleware from '../middleware/authTokenMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getAllEvents);
+router.get('/', authTokenMiddleware, getAllEvents);
+router.get('/:id', authTokenMiddleware, getEvent);
 
-router.get('/:id', getEvent);
+router.post('/', authTokenMiddleware, stringToDateMiddleware, createEvent);
 
-router.post('/', stringToDateMiddleware, createEvent);
+router.put('/:id', authTokenMiddleware, stringToDateMiddleware, updateEvent);
 
-router.put('/:id', stringToDateMiddleware, updateEvent);
-
-router.delete('/:id', deleteEvent);
-
+router.delete('/:id', authTokenMiddleware, deleteEvent);
 // Middleware: Loguj requesty do tego routera
 
 router.use((req, res, next) => {

@@ -6,6 +6,13 @@ const Event = sequelize.define('Event', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true, 
+    },userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: 'users',
+            key: 'id',
+        }
     },
     title: {
         type: DataTypes.STRING,

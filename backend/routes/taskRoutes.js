@@ -1,6 +1,7 @@
 import express from 'express';
 import {getAllTasks, getTask, createTask, updateTask, deleteTask} from '../controllers/taskController.js';
 import { stringToDateMiddleware } from '../middleware/stringToDateMiddleware.js';
+import authTokenMiddleware from '../middleware/authTokenMiddleware.js';
 
 const router = express.Router();
 
@@ -11,14 +12,13 @@ router.use((req, res, next) => {
     next();
 });
 
-router.get('/', getAllTasks);
+router.get('/', authTokenMiddleware, getAllTasks);
 
-router.get('/:id', getTask);
+router.get('/:id', authTokenMiddleware, getTask);
 
-router.post('/', stringToDateMiddleware, createTask);
+router.post('/', authTokenMiddleware, stringToDateMiddleware, createTask);
 
-router.put('/:id', stringToDateMiddleware, updateTask);
+router.put('/:id', authTokenMiddleware, stringToDateMiddleware, updateTask);
 
-router.delete('/:id', deleteTask);
-
+router.delete('/:id', authTokenMiddleware, deleteTask);
 export default router;

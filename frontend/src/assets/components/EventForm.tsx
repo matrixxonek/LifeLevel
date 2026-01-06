@@ -15,7 +15,7 @@ const EventFields: React.FC<EventFieldsProps> = ({ data, onChange }) => {
     };
 
     return (
-        <div className="event-fields">
+        <div className="event-fields flex flex-col gap-4 [&>*]:ring-1 [&>*]:ring-gray-300 [&>*]:rounded-md [&>*]:p-2">
             <label htmlFor="title">Tytuł</label>
             <input 
                 id="title" 

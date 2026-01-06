@@ -25,7 +25,7 @@ const TaskFields: React.FC<TaskFieldsProps> = ({ data, onChange }) => {
     };
 
     return (
-        <div className="task-fields">
+        <div className="task-fields flex flex-col gap-4 [&>*]:ring-1 [&>*]:ring-gray-300 [&>*]:rounded-md [&>*]:p-2">
             <label htmlFor="title">Tytuł</label>
             <input 
                 id="title" 
