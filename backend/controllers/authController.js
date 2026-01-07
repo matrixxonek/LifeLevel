@@ -56,3 +56,19 @@ export const loginUser = async (req, res)=>{
         res.status(500).json({ message: error.message });
     }
 }
+
+export const getMe = async (req, res)=>{
+    try {
+        // req.user.id mamy z tokena dzięki middleware
+        const user = await User.findByPk(req.user.id, {
+            attributes: ['id', 'username', 'email'], // nie wysyłaj hasła!
+            include: [{ model: Stats }] // od razu pobierz statystyki level/xp
+        });
+        
+        if (!user) return res.status(404).json({ message: "User not found" });
+        
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
