@@ -35,9 +35,13 @@ export const getEvent = async (req, res) => {
 export const createEvent = async (req, res) => {
     try {
         // Łączymy dane z frontu z ID użytkownika z tokena
+        if (req.body.type === 'event' && !req.body.end) {
+            req.body.end = req.body.start; // lub zwróć błąd 400 Bad Request
+        }
         const eventData = { ...req.body, userId: req.user.id };
         const event = await Event.create(eventData);
-        res.status(201).json(event);
+        const typedEvent = eventTypeAddingMiddleware([event])[0];
+        res.status(201).json(typedEvent);
     } catch (error) {
         res.status(500).json({ message: 'Error creating event', error: error.message });
     }

@@ -2,10 +2,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  stats?: {
-    level: number;
-    xp: number;
-  };
+  stats: Stats;
 }
 
 export interface AuthContextType {
@@ -15,4 +12,18 @@ export interface AuthContextType {
   login: (credentials: any) => Promise<void>;
   register: (userData: any) => Promise<void>;
   logout: () => void;
+  updateStats: (newStats: Stats) => void;
+}
+
+export interface Stats {
+  id: number;
+  userId: string;
+  level: number;
+  totalExp: number;
+  mindExp: number;
+  physicalExp: number;
+  socialExp: number;
+  currentStreak: number;
+  createdAt?: string;
+  updatedAt?: string;
 }

@@ -3,6 +3,7 @@ export const taskTypeAddingMiddleware = (tasks) => {
         if (!Array.isArray(tasks)) return []; 
         return tasks.map(task => {
             const dataValue = task.toJSON();
+            console.log('Przetwarzany task:', dataValue);
             return {
                 ...dataValue,
                 type: 'task'

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext} from 'react';
-import type { User, AuthContextType } from '../types/userTypes';
+import type { User, AuthContextType, Stats } from '../types/userTypes';
 import { getMe, loginUser, registerUser, logoutUser } from '../services/authService';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,7 +14,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (token) {
                 try {
                     const userData = await getMe();
-                    setUser(userData);
+                    const formattedUser = {
+                        ...userData,
+                        stats: userData.Stat || userData.stats // Obsługujemy obie wersje dla bezpieczeństwa
+                    };
+                    setUser(formattedUser);
                 } catch (error) {
                     console.error('Błąd podczas pobierania danych użytkownika:', error);
                     localStorage.removeItem('token');
@@ -28,7 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const login = async(credentials: any) => {
         try {
             const userData = await loginUser(credentials);
-            setUser(userData.user);
+            const userObj = userData.user ? userData.user : userData;
+            const formattedUser = {
+                ...userObj,
+                stats: userObj.Stat || userObj.stats
+            };
+            setUser(formattedUser);
         } catch (error) {
             throw error;
         }
@@ -47,6 +56,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(null);
     };
 
+    const updateStats = (newStats: Stats) => {
+        setUser(prev => prev ? { ...prev, stats: newStats } : null);
+    };
+
     return (
     <AuthContext.Provider value={{
         user,
@@ -54,7 +67,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading: loading,
         login,
         register,
-        logout: handleLogout
+        logout: handleLogout,
+        updateStats
     }}>
         {children}
     </AuthContext.Provider>);

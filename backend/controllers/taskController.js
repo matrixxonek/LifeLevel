@@ -1,5 +1,6 @@
 import Task from '../models/taskModel.js';
 import { taskTypeAddingMiddleware } from '../middleware/taskTypeAddingMiddleware.js';
+import { processTaskCompletion } from '../services/rpgService.js';
 
 export const getAllTasks = async (req, res)=>{
     console.log('--- KONTROLER TASKÓW ZOSTAŁ WYWOŁANY ---');
@@ -38,7 +39,8 @@ export const createTask = async (req,res)=>{
     try {
         const taskData = { ...req.body, userId: req.user.id };
         const task = await Task.create(taskData);
-        res.status(201).json(task);
+        const typedtask = taskTypeAddingMiddleware([task])[0];
+        res.status(201).json(typedtask);
     } catch (error) {
         res.status(500).json({ message: 'Error creating Task', error: error.message });
     }
@@ -77,3 +79,21 @@ export const deleteTask = async (req,res)=>{
         res.status(500).json({ message: 'Error deleting Task', error: error.message });
     }
 }
+
+export const patchTask = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userIdFromToken = req.user.id; // Dane z zalogowanego sesji/tokena
+
+        console.log(`Próba wykonania zadania ID: ${id} przez User: ${userIdFromToken}`);
+
+        const newStats = await processTaskCompletion(id, userIdFromToken);
+
+        res.json({ 
+            message: "Zadanie wykonane!", 
+            newStats 
+        });
+    } catch (error) {
+        return res.status(400).json({ message: 'Błąd podczas przetwarzania zadania', error: error.message });
+    }
+};

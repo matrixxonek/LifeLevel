@@ -1,6 +1,7 @@
 import type {CalendarItem, CreateItem} from '../types/types.ts';
 import axios from 'axios';
 import api from '../api/axios.ts';
+import type { Stats } from '../types/userTypes.ts';
 
 export const createItemHandler = async (newItem: CreateItem) : Promise<CalendarItem>=> {
   try {
@@ -21,8 +22,11 @@ export const createItemHandler = async (newItem: CreateItem) : Promise<CalendarI
 export const updateItemHandler = async(itemToEdit: CalendarItem) : Promise<CalendarItem> =>{
   try {
     console.log('Moj item ktory updateuje: ' +itemToEdit +' a to jego typ: ' + itemToEdit.type);
-    const endpoint = itemToEdit.type === 'event'?'events':'tasks'.concat('/').concat(itemToEdit.id);
+    const base = itemToEdit.type === 'event' ? 'events' : 'tasks';
+    // Nawet jeśli type byłoby undefined, to chociaż wyślemy na "tasks/ID" zamiast "tasks"
+    const endpoint = `${base}/${itemToEdit.id}`;
     const response = await api.put<CalendarItem>(endpoint, itemToEdit);
+    
     return response.data; 
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -66,7 +70,9 @@ export const getAllTasksHandler = async() : Promise<CalendarItem[]> =>{
 
 export const deleteItemHandler = async(itemToDelete: CalendarItem) =>{
   try {
-    const endpoint = itemToDelete.type === 'event'?'events':'tasks'.concat('/').concat(itemToDelete.id);
+    const base = itemToDelete.type === 'event' ? 'events' : 'tasks';
+    // Nawet jeśli type byłoby undefined, to chociaż wyślemy na "tasks/ID" zamiast "tasks"
+    const endpoint = `${base}/${itemToDelete.id}`;
     await api.delete(endpoint);
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -76,3 +82,18 @@ export const deleteItemHandler = async(itemToDelete: CalendarItem) =>{
       throw error;
   }
 }
+
+export const completeTaskHandler = async (taskId: string): Promise<{ message: string, newStats: Stats }> => {
+  try {
+    // Używamy metody patch zgodnie z ustaleniami
+    const response = await api.patch<{ message: string, newStats: Stats }>(`tasks/${taskId}/complete`);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Błąd API podczas kończenia zadania:", error.response?.data || error.message);
+    } else {
+      console.error("Nieznany błąd:", error);
+    }
+    throw error;
+  }
+};

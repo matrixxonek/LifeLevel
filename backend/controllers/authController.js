@@ -15,7 +15,15 @@ export const registerUser = async (req, res)=>{
         const newUser = await User.create(
             {username, email, password: hashedPassword}, {transaction: t}
         );
-        await Stats.create({ userId: newUser.id }, { transaction: t });
+        await Stats.create({
+            userId: newUser.id,
+            level: 1,
+            totalExp: 0,
+            mindExp: 0,
+            physicalExp: 0,
+            socialExp: 0,
+            currentStreak: 0
+        }, { transaction: t });
         await t.commit();
 
         const token = generateToken(newUser);

@@ -1,146 +1,158 @@
-import { useState, useCallback, useEffect } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { useState, useCallback } from 'react';
+import { Calendar, momentLocalizer, type View, Views } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
+import { useCalendar } from '../hooks/useCalendar';
+import type { CalendarItem } from '../types/types';
+import type { DropResizeArgs } from '../types/dndTypes';
+import Form from './Form';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import type { CalendarItem, CreateItem } from '../types/types';
-import type { DropResizeArgs} from '../types/dndTypes';
-import { createItemHandler, updateItemHandler, getAllEventsHandler, getAllTasksHandler, deleteItemHandler } from '../services/apiService';
-import Form from './Form';
 
 const localizer = momentLocalizer(moment);
+const DnDCalendar = withDragAndDrop<CalendarItem, any>(Calendar);
 
-const DnDCalendar = withDragAndDrop<CalendarItem, moment.Moment>(Calendar);
+const CalendarComponent = ({ variant = 'full' }: { variant?: 'mini' | 'full' }) => {
+  const { items, loading, actions } = useCalendar();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formData, setFormData] = useState<CalendarItem | null>(null);
+  const [initialDates, setInitialDates] = useState<{ start: Date, end: Date } | null>(null);
 
-const CalendarComponent = () => {
-    const [calendarItems, setCalendarItems] = useState<CalendarItem[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-    const [formData, setFormData] = useState<CalendarItem | null>(null);
-    const [initialDates, setInitialDates] = useState<{ start: Date, end: Date } | null>(null);
+  // --- KLUCZ DO NAPRAWY PRZYCISKÓW ---
+  const [view, setView] = useState<View>(variant === 'mini' ? 'week' as View : 'month' as View);
+  const [date, setDate] = useState(new Date());
 
-    const convertItemDates = (item: CalendarItem): CalendarItem => ({
-        ...item,
-        start: item.start instanceof Date ? item.start : new Date(item.start),
-        end: item.end instanceof Date ? item.end : new Date(item.end),
+  const onNavigate = useCallback((newDate: Date) => setDate(newDate), []);
+  const onView = useCallback((newView: View) => setView(newView), []);
+
+  const handleSelectSlot = useCallback((slotInfo: { start: Date, end: Date }) => {
+    if (variant === 'mini') return;
+    setInitialDates({ start: slotInfo.start, end: slotInfo.end });
+    setFormData(null);
+    setIsFormOpen(true);
+  }, [variant]);
+
+  const handleSelectEvent = useCallback((event: CalendarItem) => {
+    setFormData(event);
+    setInitialDates(null);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleItemDnd = useCallback((args: DropResizeArgs) => {
+    const { event, start, end } = args;
+    actions.updateItem({
+      ...event,
+      start: moment(start).toDate(),
+      end: moment(end).toDate(),
     });
+  }, [actions]);
 
-    const convertArrayDates = (items: CalendarItem[]): CalendarItem[] => {
-        console.log(items);
-        return items.map(convertItemDates);
+  // --- CUSTOM STYLING DLA EVENTÓW ---
+  const eventPropGetter = (event: CalendarItem) => {
+    const isTask = 'category' in event;
+    let color = '#3b82f6'; // default Mind
+    if (isTask) {
+      if (event.category === 'Physical') color = '#10b981';
+      if (event.category === 'Social') color = '#ec4899';
+    }
+    return {
+      style: {
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderLeft: `4px solid ${color}`,
+        borderRadius: '8px',
+        fontSize: '11px',
+        color: 'white',
+        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+      }
     };
+  };
 
-    //#region Handlery API
-    const onCreateItem = async(newItem: CreateItem)=>{
-        try {
-            const createdItem = await createItemHandler(newItem);
-            setCalendarItems(prevItems => [...prevItems, createdItem])
-        } catch (error) {
-            console.error("Nie udało się utworzyć elementu:", error);
-        }
-    }
-    const onUpdateItem = useCallback(async(itemToEdit: CalendarItem)=>{
-        try {
-            const updatedItemApi = await updateItemHandler(itemToEdit);
-            const updatedItem = {
-                ...updatedItemApi,
-                type: itemToEdit.type,
-                start: new Date(updatedItemApi.start), 
-                end: new Date(updatedItemApi.end),
-            } as CalendarItem;
-            setCalendarItems(prevItems => prevItems.map(item => 
-                item.id === updatedItem.id ? updatedItem: item 
-            ));
-        } catch (error) {
-            console.error("Nie udało się zaktualizować elementu:", error);
-        }
-    }, [setCalendarItems]);
-    const onDeleteItem = async(itemToDelete: CalendarItem)=>{
-        try {
-            await deleteItemHandler(itemToDelete); 
-            setCalendarItems(prevItems => prevItems.filter(item => item.id !== itemToDelete.id)); 
-        } catch (error) {
-            console.error("Nie udało się usunąć elementu:", error);
-        }
-    }
-    //#endregion
-    //#region HandleRBCInteraction
-    const handleSelectSlot = (slotInfo: { start: Date, end: Date })=>{
-        setInitialDates({ start: slotInfo.start, end: slotInfo.end });
-        setFormData(null);
-        setIsFormOpen(true);
-    }
-
-    const handleSelectEvent = (event: CalendarItem)=>{
-        setFormData(event);
-        setInitialDates(null);
-        setIsFormOpen(true);
-    }
-
-    const onCloseForm = ()=>{
-        setIsFormOpen(false);
-        setFormData(null);
-        setInitialDates(null);
-    }
-
-    const handleItemDnd = useCallback(
-        (item: DropResizeArgs) => {
-            const newStart = moment.isMoment(item.start) ? item.start.toDate() : item.start;
-            const newEnd = moment.isMoment(item.end) ? item.end.toDate() : item.end;
-
-            const updatedItem = {
-                ...item.event,
-                start: newStart as Date,
-                end: newEnd as Date,
-            };
-            onUpdateItem(updatedItem);
-        },
-        [onUpdateItem]
-    );
-    //#endregion
-    //#region Wczytanie Danych
-    useEffect(() => {
-        const fetchItems = async () => {
-            setIsLoading(true);
-            try {
-                console.log("Proba pobrania danych");
-                const eventsPromise = getAllEventsHandler();
-                const tasksPromise = getAllTasksHandler();
-                const [events, tasks] = await Promise.all([eventsPromise, tasksPromise]);
-                const allItems = [...events, ...tasks];
-                const convertedAllItems = convertArrayDates(allItems);
-                setCalendarItems(convertedAllItems);
-            } catch (error) {
-                console.error("Nie udało się załadować danych kalendarza:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchItems();
-    }, []);
-    if (isLoading) {
-        return <div>Ładowanie kalendarza...</div>;
-    }
-    //#endregion
-    return (
-        <div style={{ height: '700px' }}>
-            <DnDCalendar
-                localizer={localizer}
-                events={calendarItems}
-                onEventDrop={handleItemDnd}
-                onEventResize={handleItemDnd}
-                onSelectSlot={handleSelectSlot}
-                onSelectEvent={handleSelectEvent}
-                defaultView="month"
-                startAccessor={(item: CalendarItem) => item.start}
-                endAccessor={(item: CalendarItem) => item.end}
-                style={{ height: 500 }}
-                selectable={true}
-            />
-            {isFormOpen && <Form formData={formData} initialDates={initialDates} onCreate={onCreateItem} onUpdate={onUpdateItem} onDelete={onDeleteItem} onClose={onCloseForm}></Form>}
+  return (
+    <div className={`relative rounded-3xl overflow-hidden transition-all duration-500 ${variant === 'mini' ? 'h-[400px] bg-white/5 p-4 border border-white/10' : 'h-full bg-transparent'}`}>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#121212]/60 z-50 backdrop-blur-md">
+          <p className="text-[#FFE9D6] animate-pulse uppercase tracking-widest text-xs">Synchronizacja czasu...</p>
         </div>
-    );
-}
+      )}
+
+      <DnDCalendar
+        localizer={localizer}
+        events={items}
+        // Kontrolowany widok i data
+        view={view}
+        date={date}
+        onView={onView}
+        onNavigate={onNavigate}
+        
+        defaultView={variant === 'mini' ? Views.WEEK : Views.MONTH}
+        views={variant === 'mini' ? [Views.WEEK] : [Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
+        toolbar={variant !== 'mini'}
+        
+        onEventDrop={handleItemDnd}
+        onEventResize={handleItemDnd}
+        onSelectSlot={handleSelectSlot}
+        onSelectEvent={handleSelectEvent}
+        selectable={variant !== 'mini'}
+        eventPropGetter={eventPropGetter}
+        
+        // Dodajemy customowe klasy CSS do nadpisania stylów RBC
+        className="rpg-calendar"
+        style={{ height: '100%' }}
+      />
+
+      <style>{`
+        /* Nadpisujemy domyślne style React Big Calendar */
+        .rpg-calendar { border: none !important; color: #fff !important; }
+        .rbc-header { 
+          padding: 12px !important; 
+          text-transform: uppercase; 
+          font-size: 10px; 
+          letter-spacing: 0.1em; 
+          color: rgba(255,255,255,0.4);
+          border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+        }
+        .rbc-month-view, .rbc-time-view { 
+          background: transparent !important; 
+          border: 1px solid rgba(255,255,255,0.05) !important;
+          border-radius: 20px;
+        }
+        .rbc-day-bg + .rbc-day-bg, .rbc-month-row + .rbc-month-row {
+          border-left: 1px solid rgba(255,255,255,0.05) !important;
+          border-top: 1px solid rgba(255,255,255,0.05) !important;
+        }
+        .rbc-today { background-color: rgba(255,233,214,0.03) !important; }
+        .rbc-off-range-bg { background-color: transparent !important; opacity: 0.2; }
+        .rbc-toolbar button {
+          color: rgba(255,255,255,0.6) !important;
+          background: rgba(255,255,255,0.05) !important;
+          border: 1px solid rgba(255,255,255,0.1) !important;
+          border-radius: 8px !important;
+          margin: 0 2px !important;
+          font-size: 11px !important;
+          text-transform: uppercase;
+        }
+        .rbc-toolbar button.rbc-active {
+          background: rgba(59, 130, 246, 0.5) !important;
+          color: white !important;
+          box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        .rbc-event { padding: 4px 8px !important; }
+      `}</style>
+
+      {isFormOpen && variant !== 'mini' && (
+        <Form 
+          formData={formData} 
+          initialDates={initialDates} 
+          onCreate={actions.addItem} 
+          onUpdate={actions.updateItem} 
+          onDelete={actions.removeItem} 
+          onClose={() => setIsFormOpen(false)} 
+        />
+      )}
+    </div>
+  );
+};
 
 export default CalendarComponent;
