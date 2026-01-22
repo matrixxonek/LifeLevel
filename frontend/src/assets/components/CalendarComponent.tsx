@@ -6,7 +6,6 @@ import { useCalendar } from '../hooks/useCalendar';
 import type { CalendarItem } from '../types/types';
 import type { DropResizeArgs } from '../types/dndTypes';
 import Form from './Form';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
@@ -20,7 +19,6 @@ const CalendarComponent = ({ variant = 'full' }: { variant?: 'mini' | 'full' }) 
   const [formData, setFormData] = useState<CalendarItem | null>(null);
   const [initialDates, setInitialDates] = useState<{ start: Date, end: Date } | null>(null);
 
-  // --- KLUCZ DO NAPRAWY PRZYCISKÓW ---
   const [view, setView] = useState<View>(variant === 'mini' ? 'week' as View : 'month' as View);
   const [date, setDate] = useState(new Date());
 
@@ -49,7 +47,6 @@ const CalendarComponent = ({ variant = 'full' }: { variant?: 'mini' | 'full' }) 
     });
   }, [actions]);
 
-  // --- CUSTOM STYLING DLA EVENTÓW ---
   const eventPropGetter = (event: CalendarItem) => {
     const isTask = 'category' in event;
     let color = '#3b82f6'; // default Mind
@@ -70,7 +67,7 @@ const CalendarComponent = ({ variant = 'full' }: { variant?: 'mini' | 'full' }) 
   };
 
   return (
-    <div className={`relative rounded-3xl overflow-hidden transition-all duration-500 ${variant === 'mini' ? 'h-[400px] bg-white/5 p-4 border border-white/10' : 'h-full bg-transparent'}`}>
+    <div className={`relative rounded-3xl overflow-hidden transition-all duration-500 ${variant === 'mini' ? 'h-100 bg-white/5 p-4 border border-white/10' : 'h-full bg-transparent'}`}>
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-[#121212]/60 z-50 backdrop-blur-md">
           <p className="text-[#FFE9D6] animate-pulse uppercase tracking-widest text-xs">Synchronizacja czasu...</p>
@@ -80,11 +77,11 @@ const CalendarComponent = ({ variant = 'full' }: { variant?: 'mini' | 'full' }) 
       <DnDCalendar
         localizer={localizer}
         events={items}
-        // Kontrolowany widok i data
         view={view}
         date={date}
         onView={onView}
         onNavigate={onNavigate}
+        allDayAccessor={(event: any) => event.isAllDay}
         
         defaultView={variant === 'mini' ? Views.WEEK : Views.MONTH}
         views={variant === 'mini' ? [Views.WEEK] : [Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
@@ -97,7 +94,6 @@ const CalendarComponent = ({ variant = 'full' }: { variant?: 'mini' | 'full' }) 
         selectable={variant !== 'mini'}
         eventPropGetter={eventPropGetter}
         
-        // Dodajemy customowe klasy CSS do nadpisania stylów RBC
         className="rpg-calendar"
         style={{ height: '100%' }}
       />

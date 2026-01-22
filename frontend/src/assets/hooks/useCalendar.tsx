@@ -12,7 +12,6 @@ export const useCalendar = () => {
   const [items, setItems] = useState<CalendarItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Funkcja pomocnicza do konwersji dat (odciążamy komponent)
   const formatItems = useCallback((data: CalendarItem[]): CalendarItem[] => {
     return data.map(item => ({
       ...item,
@@ -38,17 +37,16 @@ export const useCalendar = () => {
     }
   }, [formatItems]);
 
-  // Inicjalne ładowanie
   useEffect(() => {
     fetchAllData();
   }, [fetchAllData]);
 
-  // 2. Dodawanie elementu
   const addItem = async (newItem: CreateItem) => {
     try {
       const created = await createItemHandler(newItem);
-      const formatted = { ...created, start: new Date(created.start), end: new Date(created.end) };
+      const formatted = { ...created, start: new Date(created.start), end: new Date(created.end)};
       setItems(prev => [...prev, formatted]);
+      
       return formatted;
     } catch (error) {
       console.error("Nie udało się dopisać do dziennika:", error);

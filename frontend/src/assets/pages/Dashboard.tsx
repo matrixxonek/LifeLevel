@@ -43,18 +43,17 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* 2. MINI KALENDARZ (Pergamin) - Środek */}
+      {/* 2. MINI KALENDARZ - Środek */}
       <section className="col-span-12 lg:col-span-6 row-span-4 bg-white/2 border border-white/5 rounded-3xl p-2 overflow-hidden">
         <CalendarComponent variant="mini" />
       </section>
 
-      {/* 3. TASK LISTA (Sakiewka) - Prawa strona */}
+      {/* 3. TASK LISTA - Prawa strona */}
       <section className="col-span-12 lg:col-span-3 row-span-4 bg-[#1a1c2e]/50 backdrop-blur-md border border-white/10 rounded-3xl p-6 overflow-hidden flex flex-col">
         <h3 className="text-xs uppercase tracking-[0.2em] text-[#FFE9D6]/50 mb-4 text-center lg:text-left">
           Zlecenia na dziś
         </h3>
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {/* Wywołanie analogiczne do kalendarza */}
           <TaskList variant="mini" />
         </div>
         <Link to="/tasks" className="text-center text-[9px] uppercase tracking-widest text-[#FFE9D6]/30 hover:text-[#FFE9D6]/60 transition-colors mt-4 block">

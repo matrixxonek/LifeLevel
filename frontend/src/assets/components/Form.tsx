@@ -65,11 +65,12 @@ function Form(props: FormProps) {
   }
 
   const handleSave = async () => {
-  if (isSubmiting) return;
-  setIsSubmitting(true);
+    if (isSubmiting) return;
+    setIsSubmitting(true);
     if (!currentData || !currentData.title) return;
+    const isEvent = (currentData as any).type === 'event';
       try {
-        const safeEndDate = (currentData as any).end || moment(currentData.start).add(1, 'hour').toDate();
+        let safeEndDate = (currentData as any).end || moment(currentData.start).add(1, 'hour').toDate();
         if (isEditMode) {
             const payload: CalendarItem = {
               id: id as string,
@@ -79,6 +80,17 @@ function Form(props: FormProps) {
             }
             await props.onUpdate(payload as CalendarItem); 
           } else {
+            if(isEvent){
+              if((currentData as CreateEvent).isAllDay == true){
+                const start = new Date(currentData.start);
+                start.setHours(0, 0, 0, 0);
+                const end = new Date(currentData.end);
+                end.setHours(23, 59, 59, 999);
+
+                currentData.start = start;
+                safeEndDate = end;
+              };
+            };
             const payload: CreateItem = {
               type: itemType,
               data: {
