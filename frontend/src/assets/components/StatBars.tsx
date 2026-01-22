@@ -26,7 +26,7 @@ const SingleBar = ({ name, exp, colors }: { name: string, exp: number, colors: s
 
 export const StatBars: React.FC<StatBarsProps> = ({ stats }) => {
   return (
-    <div className="flex flex-col gap-6 p-4">
+    <div className="flex flex-col gap-4 lg:gap-6 p-2 lg:p-4 w-full">
       <SingleBar 
         name="Wiedza" 
         exp={stats?.mindExp || 0} 

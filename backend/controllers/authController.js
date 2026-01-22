@@ -5,8 +5,6 @@ import {hashPassword, comparePasswords, generateToken} from "../services/authSer
 
 
 export const registerUser = async (req, res)=>{
-    //wprowadza dane do bazy danych z nowym userem i do tabeli stats nowy wynik dla niego
-    //generuje token i przekazuje na frontend?
     const t = await sequelize.transaction();
     try {
         const { username, email, password } = req.body;

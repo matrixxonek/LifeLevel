@@ -4,6 +4,10 @@
 
 ---
 
+**API Documentation** https://documenter.getpostman.com/view/51290401/2sBXVkBUrC
+
+---
+
 ## ✨ Główne Funkcjonalności
 
 ### 1. System Planowania (Core Planner)

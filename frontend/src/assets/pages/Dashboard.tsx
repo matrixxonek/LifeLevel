@@ -21,10 +21,10 @@ const Dashboard = () => {
   }
   console.log('Dane użytkownika w Dashboard:', user);
   return (
-    <div className="h-full grid grid-cols-12 grid-rows-6 gap-6">
+    <div className="min-h-screen lg:h-full grid grid-cols-1 lg:grid-cols-12 grid-rows-auto lg:grid-rows-6 gap-6 p-4 lg:p-0">
       
-      {/* 1. SEKCJA STATYSTYK (Eliksiry) - Lewa kolumna */}
-      <section className="col-span-12 lg:col-span-3 row-span-4 flex flex-col gap-4">
+      {/* 1. SEKCJA STATYSTYK */}
+      <section className="col-span-1 lg:col-span-3 lg:row-span-4 flex flex-col gap-4">
         <div className="flex-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col justify-around">
           <h3 className="text-xs uppercase tracking-[0.2em] text-[#FFE9D6]/50 mb-4">Twoje Atrybuty</h3>
           
@@ -43,13 +43,13 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* 2. MINI KALENDARZ - Środek */}
-      <section className="col-span-12 lg:col-span-6 row-span-4 bg-white/2 border border-white/5 rounded-3xl p-2 overflow-hidden">
+      {/* 2. MINI KALENDARZ */}
+      <section className="col-span-1 lg:col-span-6 lg:row-span-4 bg-white/2 border border-white/5 rounded-3xl p-2 overflow-hidden h-[400px] lg:h-auto">
         <CalendarComponent variant="mini" />
       </section>
 
-      {/* 3. TASK LISTA - Prawa strona */}
-      <section className="col-span-12 lg:col-span-3 row-span-4 bg-[#1a1c2e]/50 backdrop-blur-md border border-white/10 rounded-3xl p-6 overflow-hidden flex flex-col">
+      {/* 3. TASK LISTA */}
+      <section className="col-span-1 lg:col-span-3 lg:row-span-4 bg-[#1a1c2e]/50 backdrop-blur-md border border-white/10 rounded-3xl p-6 overflow-hidden flex flex-col h-[400px] lg:h-auto">
         <h3 className="text-xs uppercase tracking-[0.2em] text-[#FFE9D6]/50 mb-4 text-center lg:text-left">
           Zlecenia na dziś
         </h3>
@@ -61,8 +61,8 @@ const Dashboard = () => {
         </Link>
       </section>
 
-      {/* 4. WYKRESY PROGRESU - Cały dół */}
-      <section className="col-span-12 row-span-2 bg-[#1a1a1a]/50 border border-white/5 rounded-3xl p-6 flex items-center justify-center text-white/20 italic">
+      {/* 4. WYKRESY PROGRESU */}
+      <section className="col-span-1 lg:col-span-12 lg:row-span-2 bg-[#1a1a1a]/50 border border-white/5 rounded-3xl p-6 flex items-center justify-center text-white/20 italic min-h-[150px]">
         <div className="text-center">
            <p>Tutaj pojawią się Twoje wykresy progresu</p>
            <p className="text-[10px] mt-2">(Analiza generowana przez Python Analytics)</p>
@@ -70,7 +70,7 @@ const Dashboard = () => {
       </section>
 
     </div>
-  );
+);
 };
 
 export default Dashboard;
