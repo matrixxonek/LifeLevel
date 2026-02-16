@@ -16,17 +16,26 @@ const ExpHistory = sequelize.define('ExpHistory', {
         allowNull: false
     },
     category: {
-        type: DataTypes.ENUM('Mind', 'Physical', 'Social'),
+        type: DataTypes.STRING, // Zmienione z ENUM dla większej elastyczności API
         allowNull: false
     },
     reason: {
         type: DataTypes.STRING,
-        allowNull: false // np. "Completed Task: Morning Run"
+        allowNull: false
+    },
+    // --- NOWE POLA ---
+    source: {
+        type: DataTypes.STRING,
+        defaultValue: 'Manual' // 'GitHub', 'Strava' lub 'Manual'
+    },
+    externalId: {
+        type: DataTypes.STRING,
+        allowNull: true // Tu będzie ID pusha/treningu
     }
 }, {
     tableName: 'exp_history',
-    timestamps: true, // Automatycznie doda createdAt, czyli datę zdobycia XP
-    updatedAt: false // Historia jest tylko do odczytu/zapisu, nie edytujemy jej
+    timestamps: true,
+    updatedAt: false
 });
 
 export default ExpHistory;

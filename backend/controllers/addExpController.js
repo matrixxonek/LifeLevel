@@ -1,7 +1,7 @@
-// backend/controllers/rpgController.js
 import sequelize from "../config/db.js";
 import Stats from "../models/statsModel.js";
 import ExpHistory from "../models/exp_HistoryModel.js";
+import { Op } from 'sequelize';
 
 export const addExternalExp = async (req, res) => {
     const { userId, amount, category, reason, source, externalId } = req.body;

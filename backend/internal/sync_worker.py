@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 # KONFIGURACJA
-BASE_URL = "http://localhost:5000/api/internal"
+BASE_URL = "http://localhost:3000/api/internal"
 INTERNAL_KEY = "9b1c8e5f-8a3b-4c9d-9e7a-2f1b6c8d9e7f"  # Musi zgadzać się z internal-key w Expressie
 HEADERS = {"internal-key": INTERNAL_KEY}
 SYNC_INTERVAL = 900  # 15 minut (w sekundach)

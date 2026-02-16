@@ -1,4 +1,5 @@
 import User from '../models/userModel.js';
+import { Op } from 'sequelize';
 
 export const getSyncTargets = async (req, res) => {
     try {
@@ -15,6 +16,7 @@ export const getSyncTargets = async (req, res) => {
         });
         res.json(users);
     } catch (error) {
-        res.status(500).json({ error: "Błąd podczas pobierania celów synchronizacji" });
+        console.error("BŁĄD SEQUELIZE:", error); // To wypisze błąd w terminalu Node
+        res.status(500).json({ error: error.message })
     }
 };
