@@ -1,0 +1,20 @@
+import User from '../models/userModel.js';
+
+export const getSyncTargets = async (req, res) => {
+    try {
+        // Pobieramy tylko ID i dane dostępowe, żeby nie przesyłać haseł itp.
+        const users = await User.findAll({
+            attributes: ['id', 'githubUsername', 'stravaAccessToken'],
+            // Pobierz tylko tych, którzy mają przynajmniej jedno z nich
+            where: {
+                [Op.or]: [
+                    { githubUsername: { [Op.ne]: null } },
+                    { stravaAccessToken: { [Op.ne]: null } }
+                ]
+            }
+        });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: "Błąd podczas pobierania celów synchronizacji" });
+    }
+};

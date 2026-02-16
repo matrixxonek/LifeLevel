@@ -20,6 +20,20 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    githubUsername: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true 
+    },
+    stravaAthleteId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
+    },
+    stravaAccessToken: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     tableName: 'users',

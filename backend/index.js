@@ -6,6 +6,7 @@ import authRoute from './routes/authRoutes.js';
 import taskRoute from './routes/taskRoutes.js';
 import setupAssociations from './models/associations.js';
 import sequelize from './config/db.js';
+import internalRoute from './routes/internalRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT;
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use('/api/events', eventRoute);
 app.use('/api/tasks', taskRoute)
 app.use('/api/auth', authRoute);
+app.use('/api/internal', internalRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

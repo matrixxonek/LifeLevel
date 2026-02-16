@@ -1,0 +1,19 @@
+{
+  "name": "lifelevel",
+  "version": "1.0.0",
+  "description": "**LifeLevel** to coś więcej niż zwykły menedżer zadań – to produktywne RPG, w którym realizacja Twojej prawdziwej listy \"do zrobienia\" podnosi poziom Twojej wirtualnej postaci. Zmień codzienne obowiązki, treningi i naukę w epickie questy, które rozwijają Twoje atrybuty i budują dyscyplinę.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matrixxonek/LifeLevel.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matrixxonek/LifeLevel/issues"
+  },
+  "homepage": "https://github.com/matrixxonek/LifeLevel#readme"
+}
