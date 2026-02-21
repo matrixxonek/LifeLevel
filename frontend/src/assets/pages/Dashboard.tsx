@@ -2,11 +2,38 @@ import CalendarComponent from '../components/CalendarComponent';
 import { useAuth } from '../context/authContext';
 import { StatBars } from '../components/StatBars';
 import { TaskList } from '../components/TaskList';
+import StatsChart from '../components/StatsChart';
+import type {ChartDataPoint} from '../components/StatsChart';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { getStatsHandler } from '../services/apiService';
 
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
-  console.log('Czy trwa autoryzacja: ', isLoading);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+
+  useEffect(() => {
+    console.log("aaaaaaaaaaaaaaaaaaaaa Dashboard useEffect triggered. User:", user, "isLoading:", isLoading);
+    const token = localStorage.getItem('token'); 
+
+    const fetchStats = async () => {
+      if (!token) return;
+
+      try {
+        const response = await getStatsHandler();
+        console.log("Dashboard stats response:", response);
+
+        if (Array.isArray(response)) {
+          setChartData(response);
+        }
+      } catch (err: any) {
+        console.error("Błąd Axios:", err.response?.data || err.message);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   if (isLoading) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-[#121212]">
@@ -16,10 +43,11 @@ const Dashboard = () => {
       </div>
     );
   }
+
   if (!user) {
-    return <div>Nie jesteś zalogowany.</div>;
+    return <div className="text-white p-10">Nie jesteś zalogowany.</div>;
   }
-  console.log('Dane użytkownika w Dashboard:', user);
+
   return (
     <div className="min-h-screen lg:h-full grid grid-cols-1 lg:grid-cols-12 grid-rows-auto lg:grid-rows-6 gap-6 p-4 lg:p-0">
       
@@ -61,16 +89,22 @@ const Dashboard = () => {
         </Link>
       </section>
 
-      {/* 4. WYKRESY PROGRESU */}
-      <section className="col-span-1 lg:col-span-12 lg:row-span-2 bg-[#1a1a1a]/50 border border-white/5 rounded-3xl p-6 flex items-center justify-center text-white/20 italic min-h-[150px]">
-        <div className="text-center">
-           <p>Tutaj pojawią się Twoje wykresy progresu</p>
-           <p className="text-[10px] mt-2">(Analiza generowana przez Python Analytics)</p>
-        </div>
+      {/* 4. WYKRESY PROGRESU - TUTAJ WRZUCAMY KOMPONENT */}
+      <section className="col-span-1 lg:col-span-12 lg:row-span-2 bg-[#1a1a1a]/50 border border-white/5 rounded-3xl overflow-hidden min-h-[250px]">
+        {chartData.length > 0 ? (
+          <StatsChart data={chartData} />
+        ) : (
+          <div className="h-full flex items-center justify-center text-white/20 italic">
+             <div className="text-center">
+                <p>Brak danych do analizy progresu</p>
+                <p className="text-[10px] mt-2">(Wykonaj pierwsze zadania, aby Python wygenerował wykres)</p>
+             </div>
+          </div>
+        )}
       </section>
 
     </div>
-);
+  );
 };
 
 export default Dashboard;

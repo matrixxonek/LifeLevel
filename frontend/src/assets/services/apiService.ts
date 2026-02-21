@@ -68,6 +68,20 @@ export const getAllTasksHandler = async() : Promise<CalendarItem[]> =>{
   }
 }
 
+export const getStatsHandler = async() : Promise<Stats> =>{
+  try {
+    const response = await api.get<Stats>("internal/stats");
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+        console.error("Błąd API podczas pobierania statystyk:", error.response?.data || error.message);
+      } else {
+        console.error("Nieznany błąd:", error);
+      }
+      throw error;
+  }
+};
+
 export const deleteItemHandler = async(itemToDelete: CalendarItem) =>{
   try {
     const base = itemToDelete.type === 'event' ? 'events' : 'tasks';
